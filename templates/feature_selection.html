@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Feature Selection</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/feature_selection_styles.css') }}">
+</head>
+<body>
+<form action="/display_features" method="post" id="fs-form">
+    <div>
+        <label for="method">Select Feature Selection Method:</label>
+        <select id="method" name="method">
+            <option value="" selected>Select Method</option>
+            <option value="method1">Variance Thresholding</option>
+            <option value="method2">Correlation Coefficient</option>
+            <option value="method3">Dispersion Ratio</option>
+            <option value="method4">Fisher Score</option>
+            <option value="method5">Mean Absolute Difference</option>
+            <option value="method6">Mutual Dependence</option>
+            <option value="method7">Chi Square Test</option>
+            <option value="method8">Forward Selection</option>
+            <option value="method9">Backward Elimination</option>
+            <option value="method10">Exhaustive Selection</option>
+            <option value="method11">Lasso Regularization</option>
+            <option value="method12">Random Forest Regressor</option>
+        </select>
+    </div>
+
+    <div id="filter-methods" style="display: none;">
+        <label for="output_feature_name1">Output Feature Name:</label>
+        <select id="output_feature_name1" name="output_feature_name1" onchange="isIgnoreDatetimeNo(1)">
+            <option value="" selected>Select Output Feature</option>
+            {% for column, data_type in output_features.items() %}
+                <option value="{{ column }}">{{ column }} : {{ data_type }}</option>
+            {% endfor %}
+        </select>
+
+        {% if ignore_datetime != 0 %}
+            <label for="ignore_datetime1">Ignore Datetime Feature(s)?</label>
+            <select id="ignore_datetime1" name="ignore_datetime1" onchange="updateNumFeaturesDropdown16(1)">
+                <option value="no" selected>No</option>
+                <option value="yes">Yes</option>
+            </select>
+        {% endif %}
+
+        <label for="num_of_features_to_select1">Number of Features to Select:</label>
+        <select id="num_of_features_to_select1" name="num_of_features_to_select1">
+            {% for i in range(1, output_features|length) %}
+                <option value="{{ i }}">{{ i }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div id="forward_selection" style="display: none;">
+        <label for="output_feature_name2">Output Feature Name:</label>
+        <select id="output_feature_name2" name="output_feature_name2" onchange="isIgnoreDatetimeNo(2)">
+            <option value="" selected>Select Output Feature</option>
+            {% for column, data_type in output_features.items() %}
+                <option value="{{ column }}">{{ column }} : {{ data_type }}</option>
+            {% endfor %}
+        </select>
+
+        {% if ignore_datetime != 0 %}
+            <label for="ignore_datetime2">Ignore Datetime Feature(s)?</label>
+            <select id="ignore_datetime2" name="ignore_datetime2" onchange="updateNumFeaturesDropdown2(2)">
+                <option value="no" selected>No</option>
+                <option value="yes">Yes</option>
+            </select>
+        {% endif %}
+
+        <label for="max_num_of_features_to_select2">Maximum Number of Features to Select:</label>
+        <select id="max_num_of_features_to_select2" name="max_num_of_features_to_select2">
+            {% for i in range(1, output_features|length) %}
+                <option value="{{ i }}">{{ i }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="model2">Model:</label>
+        <select id="model2" name="model2">
+            <option value="" selected>Select Model</option>
+            <option value="LinearRegression()">Linear Regression</option>
+            <option value="LogisticRegression()">Logistic Regression</option>
+        </select>
+
+        <label for="scoring2">Scoring Method:</label>
+        <select id="scoring2" name="scoring2">
+            <option value="" selected>Select Model First</option>
+        </select>
+    </div>
+
+    <div id="backward_elimination" style="display: none;">
+        <label for="output_feature_name3">Output Feature Name:</label>
+        <select id="output_feature_name3" name="output_feature_name3" onchange="isIgnoreDatetimeNo(3)">
+            <option value="" selected>Select Output Feature</option>
+            {% for column, data_type in output_features.items() %}
+                <option value="{{ column }}">{{ column }} : {{ data_type }}</option>
+            {% endfor %}
+        </select>
+
+        {% if ignore_datetime != 0 %}
+            <label for="ignore_datetime3">Ignore Datetime Feature(s)?</label>
+            <select id="ignore_datetime3" name="ignore_datetime3" onchange="updateNumFeaturesDropdown3(3)">
+                <option value="no" selected>No</option>
+                <option value="yes">Yes</option>
+            </select>
+        {% endif %}
+
+        <label for="min_num_of_features_to_select3">Minimum Number of Features to Select:</label>
+        <select id="min_num_of_features_to_select3" name="min_num_of_features_to_select3">
+            {% for i in range(1, output_features|length) %}
+                <option value="{{ i }}">{{ i }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="model3">Model:</label>
+        <select id="model3" name="model3">
+            <option value="" selected>Select Model</option>
+            <option value="LinearRegression()">Linear Regression</option>
+            <option value="LogisticRegression()">Logistic Regression</option>
+        </select>
+
+        <label for="scoring3">Scoring Method:</label>
+        <select id="scoring3" name="scoring3">
+            <option value="" selected>Select Model First</option>
+        </select>
+    </div>
+
+    <div id="exhaustive_selection" style="display: none;">
+        {% if output_features|length > 11 %}
+            <p><strong>Warning:</strong> Exhaustive selection may take significant time for large number of features. Consider choosing another method.</p>
+        {% endif %}
+        <label for="output_feature_name4">Output Feature Name:</label>
+        <select id="output_feature_name4" name="output_feature_name4" onchange="isIgnoreDatetimeNo(4)">
+            <option value="" selected>Select Output Feature</option>
+            {% for column, data_type in output_features.items() %}
+                <option value="{{ column }}">{{ column }} : {{ data_type }}</option>
+            {% endfor %}
+        </select>
+
+        {% if ignore_datetime != 0 %}
+            <label for="ignore_datetime4">Ignore Datetime Feature(s)?</label>
+            <select id="ignore_datetime4" name="ignore_datetime4" onchange="validateDatetimeChoiceAndOutputFeature45(4)">
+                <option value="no" selected>No</option>
+                <option value="yes">Yes</option>
+            </select>
+        {% endif %}
+
+        <label for="model4">Model:</label>
+        <select id="model4" name="model4">
+            <option value="" selected>Select Model</option>
+            <option value="LinearRegression()">Linear Regression</option>
+            <option value="LogisticRegression()">Logistic Regression</option>
+        </select>
+
+        <label for="scoring4">Scoring Method:</label>
+        <select id="scoring4" name="scoring4">
+            <option value="" selected>Select Model first</option>
+        </select>
+    </div>
+
+    <div id="lasso" style="display: none;">
+        <label for="output_feature_name5">Output Feature Name:</label>
+        <select id="output_feature_name5" name="output_feature_name5" onchange="isIgnoreDatetimeNo(5)">
+            <option value="" selected>Select Output Feature</option>
+            {% for column, data_type in output_features.items() %}
+                <option value="{{ column }}">{{ column }} : {{ data_type }}</option>
+            {% endfor %}
+        </select>
+
+        {% if ignore_datetime != 0 %}
+            <label for="ignore_datetime5">Ignore Datetime Feature(s)?</label>
+            <select id="ignore_datetime5" name="ignore_datetime5" onchange="validateDatetimeChoiceAndOutputFeature45(5)">
+                <option value="no" selected>No</option>
+                <option value="yes">Yes</option>
+            </select>
+        {% endif %}
+
+        <label for="penalty5">Regularization penalty:</label>
+        <input type="number" id="penalty5" name="penalty5" step="any">
+    </div>
+
+    <div id="random_forest" style="display: none;">
+        <label for="output_feature_name6">Output Feature Name:</label>
+        <select id="output_feature_name6" name="output_feature_name6" onchange="isIgnoreDatetimeNo(6)">
+            <option value="" selected>Select Output Feature</option>
+            {% for column, data_type in output_features.items() %}
+                <option value="{{ column }}">{{ column }} : {{ data_type }}</option>
+            {% endfor %}
+        </select>
+
+        {% if ignore_datetime != 0 %}
+            <label for="ignore_datetime6">Ignore Datetime Feature(s)?</label>
+            <select id="ignore_datetime6" name="ignore_datetime6" onchange="updateNumFeaturesDropdown16(6)">
+                <option value="no" selected>No</option>
+                <option value="yes">Yes</option>
+            </select>
+        {% endif %}
+
+        <label for="estimators6">Number of Estimators:</label>
+        <input type="number" id="estimators6" name="estimators6">
+
+        <label for="num_of_features_to_select6">Number of Features to Select:</label>
+        <select id="num_of_features_to_select6" name="num_of_features_to_select6">
+            {% for i in range(1, output_features|length) %}
+                <option value="{{ i }}">{{ i }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <input type="submit" value="Submit">
+</form>
+
+<form id="eda" action="/eda" target="_blank">
+    <label>Exploratory Data Analysis (EDA):</label>
+    <input type="submit" value="Get EDA"/>
+</form>
+
+<form id="graphs" action="/graphs" method="post" target="_blank">
+    <p><strong>Obtain graphs between features:</strong></p>
+    <label for="first_feature">Select first feature (indept. variable):</label>
+    <select id="first_feature" name="first_feature">
+        {% for column, data_type in numerical_features.items() %}
+            <option value="{{ column }}">{{ column }} : {{ data_type }}</option>
+        {% endfor %}
+    </select>
+    <label for="second_feature">Select second feature (dept. variable):</label>
+    <select id="second_feature" name="second_feature">
+        {% for column, data_type in numerical_features.items() %}
+            <option value="{{ column }}">{{ column }} : {{ data_type }}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="Get scatter plot" style="width: 150px">
+</form>
+
+<footer>
+    Made with &#10084; by <a href="https://www.linkedin.com/in/siddharth-verma-55b521239/" target="_blank" style="text-decoration: none">Siddharth Verma</a>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#method').change(function () {
+            const selectedMethod = $(this).val();
+            if (["method1", "method2", "method3", "method4", "method5", "method6", "method7"].includes(selectedMethod)) {
+                $('#filter-methods').show();
+            } else {
+                $('#filter-methods').hide();
+            }
+            if (selectedMethod === "method8") {
+                $('#forward_selection').show();
+            } else {
+                $('#forward_selection').hide();
+            }
+            if (selectedMethod === "method9") {
+                $('#backward_elimination').show();
+            } else {
+                $('#backward_elimination').hide();
+            }
+            if (selectedMethod === "method10") {
+                $('#exhaustive_selection').show();
+            } else {
+                $('#exhaustive_selection').hide();
+            }
+            if (selectedMethod === "method11") {
+                $('#lasso').show();
+            } else {
+                $('#lasso').hide();
+            }
+            if (selectedMethod === "method12") {
+                $('#random_forest').show();
+            } else {
+                $('#random_forest').hide();
+            }
+        });
+
+        const models = ["model2", "model3", "model4"];
+
+        function updateScoringDropdown(modelDropdown, scoringDropdown) {
+            const selectedModel = modelDropdown.val();
+            scoringDropdown.empty();
+
+            if (selectedModel === "") {
+                scoringDropdown.append('<option value="" selected>Select Model First</option>');
+            } else {
+                if (selectedModel === "LinearRegression()") {
+                    scoringDropdown.append('<option value="r2">r2</option>');
+                    scoringDropdown.append('<option value="neg_mean_absolute_error">neg_mean_absolute_error</option>');
+                    scoringDropdown.append('<option value="neg_mean_squared_error">neg_mean_squared_error</option>');
+                    scoringDropdown.append('<option value="explained_variance">explained_variance</option>');
+                    scoringDropdown.append('<option value="max_error">max_error</option>');
+                } else if (selectedModel === "LogisticRegression()") {
+                    scoringDropdown.append('<option value="accuracy">accuracy</option>');
+                    scoringDropdown.append('<option value="balanced_accuracy">balanced_accuracy</option>');
+                    scoringDropdown.append('<option value="top_k_accuracy">top_k_accuracy</option>');
+                    scoringDropdown.append('<option value="precision">precision</option>');
+                    scoringDropdown.append('<option value="recall">recall</option>');
+                }
+            }
+        }
+
+        models.forEach(function (model) {
+            const modelDropdown = $('#' + model);
+            const scoringDropdown = $('#scoring' + model.slice(-1));
+            scoringDropdown.empty();
+            scoringDropdown.append('<option value="" selected>Select Model First</option>');
+            modelDropdown.change(function () {
+                updateScoringDropdown(modelDropdown, scoringDropdown);
+            });
+        });
+    });
+    document.getElementById("fs-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+        const isValid = validateForm();
+        if (isValid) {
+            this.submit();
+        } else {
+            alert("Please fill in all the required fields.");
+        }
+    });
+
+    function validateForm() {
+        const dropdowns = document.getElementsByTagName("select");
+        const method = document.getElementById("method");
+        if (method.value === "method11") {
+            const penalty = document.getElementById("penalty5").valueOf();
+            if (penalty.value === "") {
+                return false;
+            }
+        } else if (method.value === "method12") {
+            const estimators = document.getElementById("estimators6").valueOf();
+            if (estimators.value === "") {
+                return false;
+            }
+        }
+        for (let i = 0; i < dropdowns.length; i++) {
+            const dropdown = dropdowns[i];
+            const isVisible = dropdown.offsetParent !== null;
+            const value = dropdown.value;
+            if (isVisible && value === "") {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function isIgnoreDatetimeNo(n) {
+        const outputFeatureDropdown = document.getElementById('output_feature_name' + n.toString());
+        const outputFeatureType = outputFeatureDropdown.options[outputFeatureDropdown.selectedIndex].text.split(' : ')[1];
+        const ignoreDatetimeDropdown = document.getElementById('ignore_datetime' + n.toString());
+        const chosenOption = ignoreDatetimeDropdown.options[ignoreDatetimeDropdown.selectedIndex].value;
+        if (chosenOption === "yes" && outputFeatureType === "datetime64[ns]") {
+            outputFeatureDropdown.selectedIndex = 0;
+            alert('Please choose a non-datetime type of output feature while ignoring datetime feature(s)');
+        }
+    }
+
+    function updateNumFeaturesDropdown16(n) {
+        const ignoreDatetimeDropdown = document.getElementById('ignore_datetime' + n.toString());
+        const chosenOption = ignoreDatetimeDropdown.options[ignoreDatetimeDropdown.selectedIndex].value;
+        const numFeaturesDropdown = document.getElementById('num_of_features_to_select' + n.toString());
+        numFeaturesDropdown.innerHTML = '';
+        const maxNumFeatures = {{ output_features|length}} -1;
+        const outputFeatureDropdown = document.getElementById('output_feature_name' + n.toString());
+        const outputFeatureType = outputFeatureDropdown.options[outputFeatureDropdown.selectedIndex].text.split(' : ')[1];
+        if (chosenOption === 'yes') {
+            if (outputFeatureType === 'datetime64[ns]') {
+                alert('Please choose a non-datetime type of output feature while ignoring datetime feature(s)');
+                ignoreDatetimeDropdown.value = 'no';
+                updateNumFeaturesDropdown16(n);
+            }
+            for (let i = 1; i <= maxNumFeatures - {{ ignore_datetime }} -0; i++) {
+                const option = document.createElement('option');
+                option.value = i.toString();
+                option.text = i.toString();
+                numFeaturesDropdown.appendChild(option);
+            }
+        } else {
+            for (let i = 1; i <= maxNumFeatures; i++) {
+                const option = document.createElement('option');
+                option.value = i.toString();
+                option.text = i.toString();
+                numFeaturesDropdown.appendChild(option);
+            }
+        }
+    }
+
+    function updateNumFeaturesDropdown2(n) {
+        const ignoreDatetimeDropdown = document.getElementById('ignore_datetime' + n.toString());
+        const chosenOption = ignoreDatetimeDropdown.options[ignoreDatetimeDropdown.selectedIndex].value;
+        const numFeaturesDropdown = document.getElementById('max_num_of_features_to_select' + n.toString());
+        numFeaturesDropdown.innerHTML = '';
+        const maxNumFeatures = {{ output_features|length}} -1;
+        const outputFeatureDropdown = document.getElementById('output_feature_name' + n.toString());
+        const outputFeatureType = outputFeatureDropdown.options[outputFeatureDropdown.selectedIndex].text.split(' : ')[1];
+        if (chosenOption === 'yes') {
+            if (outputFeatureType === 'datetime64[ns]') {
+                alert('Please choose a non-datetime type of output feature while ignoring datetime feature(s)');
+                ignoreDatetimeDropdown.value = 'no';
+                updateNumFeaturesDropdown2(n);
+            }
+            for (let i = 1; i <= maxNumFeatures - {{ ignore_datetime }} -0; i++) {
+                const option = document.createElement('option');
+                option.value = i.toString();
+                option.text = i.toString();
+                numFeaturesDropdown.appendChild(option);
+            }
+        } else {
+            for (let i = 1; i <= maxNumFeatures; i++) {
+                const option = document.createElement('option');
+                option.value = i.toString();
+                option.text = i.toString();
+                numFeaturesDropdown.appendChild(option);
+            }
+        }
+    }
+
+    function updateNumFeaturesDropdown3(n) {
+        const ignoreDatetimeDropdown = document.getElementById('ignore_datetime' + n.toString());
+        const chosenOption = ignoreDatetimeDropdown.options[ignoreDatetimeDropdown.selectedIndex].value;
+        const numFeaturesDropdown = document.getElementById('min_num_of_features_to_select' + n.toString());
+        numFeaturesDropdown.innerHTML = '';
+        const maxNumFeatures = {{ output_features|length}} -1;
+        const outputFeatureDropdown = document.getElementById('output_feature_name' + n.toString());
+        const outputFeatureType = outputFeatureDropdown.options[outputFeatureDropdown.selectedIndex].text.split(' : ')[1];
+        if (chosenOption === 'yes') {
+            if (outputFeatureType === 'datetime64[ns]') {
+                alert('Please choose a non-datetime type of output feature while ignoring datetime feature(s)');
+                ignoreDatetimeDropdown.value = 'no';
+                updateNumFeaturesDropdown3(n);
+            }
+            for (let i = 1; i <= maxNumFeatures - {{ ignore_datetime }} -0; i++) {
+                const option = document.createElement('option');
+                option.value = i.toString();
+                option.text = i.toString();
+                numFeaturesDropdown.appendChild(option);
+            }
+        } else {
+            for (let i = 1; i <= maxNumFeatures; i++) {
+                const option = document.createElement('option');
+                option.value = i.toString();
+                option.text = i.toString();
+                numFeaturesDropdown.appendChild(option);
+            }
+        }
+    }
+
+    function validateDatetimeChoiceAndOutputFeature45(n) {
+        const ignoreDatetimeDropdown = document.getElementById('ignore_datetime' + n.toString());
+        const chosenOption = ignoreDatetimeDropdown.options[ignoreDatetimeDropdown.selectedIndex].value;
+        const outputFeatureDropdown = document.getElementById('output_feature_name' + n.toString());
+        const outputFeatureType = outputFeatureDropdown.options[outputFeatureDropdown.selectedIndex].text.split(' : ')[1];
+        if (chosenOption === 'yes') {
+            if (outputFeatureType === 'datetime64[ns]') {
+                alert('Please choose a non-datetime type of output feature while ignoring datetime feature(s)');
+                ignoreDatetimeDropdown.value = 'no';
+            }
+        }
+    }
+</script>
+</body>
+</html>

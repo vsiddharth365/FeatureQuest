@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDA Report</title>
+</head>
+<body>
+<div style="display: flex; align-items: center;">
+    <div style="padding-left: 50px;">
+        <a href="output.html" download="EDA Report.html" style="background-color: #4CAF50; color: white; padding: 10px 10px; text-decoration: none; border-radius: 4px;">Download Report</a>
+    </div>
+    <div style="padding-left: 20px;">
+        <strong>Note:</strong> If some utilities do not work, please download the report and view.
+    </div>
+</div>
+<div id="output-content"></div>
+<footer style="text-align: center; margin-top: auto;">
+    Made with &#10084; by <a href="https://www.linkedin.com/in/siddharth-verma-55b521239/" target="_blank" style="text-decoration: none">Siddharth Verma</a>
+</footer>
+<script>
+    function displayOutputContent() {
+        fetch('output.html')
+            .then(response => response.text())
+            .then(htmlContent => {
+                document.getElementById('output-content').innerHTML = htmlContent;
+            })
+            .catch(error => {
+                document.getElementById('output-content').innerHTML = 'Sorry, the EDA report could not be generated due to ' + error;
+            });
+    }
+
+    displayOutputContent();
+</script>
+</body>
+</html>

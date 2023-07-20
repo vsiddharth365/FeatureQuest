@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Selected Features</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/selected_features_styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
+</head>
+<body>
+<h3>Feature Selection Method: {{ selected_method }}</h3>
+<h3>Output Feature: {{ output_feature }}</h3>
+<h3>Selected Features:</h3>
+<table id="myTable" class="table table-striped table-bordered">
+    <thead>
+    <tr>
+        <th>Sr. No.</th>
+        <th>
+            Feature
+        </th>
+        <th>
+            Importance (%)
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for feature, value in features.items() %}
+        <tr>
+            <td>{{ loop.index }}.</td>
+            <td>{{ feature }}</td>
+            <td>{{ value }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<footer>
+    Made with &#10084; by <a href="https://www.linkedin.com/in/siddharth-verma-55b521239/" target="_blank" style="text-decoration: none">Siddharth Verma</a>
+</footer>
+<script>
+    $(document).ready(function () {
+        $('#myTable').DataTable();
+    });
+</script>
+</body>
+</html>

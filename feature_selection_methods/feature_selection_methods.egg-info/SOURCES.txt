@@ -1,0 +1,6 @@
+setup.py
+feature_selection_methods.egg-info/PKG-INFO
+feature_selection_methods.egg-info/SOURCES.txt
+feature_selection_methods.egg-info/dependency_links.txt
+feature_selection_methods.egg-info/requires.txt
+feature_selection_methods.egg-info/top_level.txt

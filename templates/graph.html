@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Graph of {{ y_var }} vs {{ x_var }}</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/graphs_styles.css') }}">
+</head>
+<body>
+{#    {{ figure | safe }}#}
+{% if error == 0 %}
+    <img src="{{ figure }}" alt="Scatter Plot"/>
+    <div class="download_button">
+        <a href="{{ figure }}" download="Scatter plot b/w {{ y_var }} vs {{ x_var }}.png">Download Graph</a>
+    </div>
+    <footer>
+        Made with &#10084; by <a href="https://www.linkedin.com/in/siddharth-verma-55b521239/" target="_blank" style="text-decoration: none">Siddharth Verma</a>
+    </footer>
+{% else %}
+    <p>Sorry, the graph between {{ y_var }} and {{ x_var }} could not be generated due to {{ figure }}</p>
+{% endif %}
+</body>
+</html>

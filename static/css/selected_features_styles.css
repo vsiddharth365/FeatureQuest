@@ -1,0 +1,26 @@
+body {
+    font-family: Verdana, sans-serif;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: #f2f2f2;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    min-height: calc(100vh - 20px);
+}
+
+h3 {
+    color: #333;
+    text-align: center;
+}
+
+footer {
+    text-align: center;
+    margin-top: auto;
+}
+
+@media (max-width: 768px) {
+    h3 {
+        font-size: 20px;
+    }
+}

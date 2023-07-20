@@ -1,0 +1,33 @@
+<html lang="en">
+<head>
+    <title>Upload Dataset</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index_styles.css') }}">
+</head>
+<body>
+<form action="/feature_selection" method="post" enctype="multipart/form-data" id="file-form">
+    <label for="file">Upload Dataset:</label>
+    <input type="file" name="file" id="file" accept=".csv,.xlsx"/>
+    <input type="submit" value="Upload"/>
+    <p>Accepted file types: .csv, .xlsx</p>
+</form>
+<footer>
+    Made with &#10084; by <a href="https://www.linkedin.com/in/siddharth-verma-55b521239/" target="_blank" style="text-decoration: none">Siddharth Verma</a>
+</footer>
+<script>
+    document.getElementById("file-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+        const isValid = validateForm();
+        if (isValid) {
+            this.submit();
+        } else {
+            alert("Please upload a file.");
+        }
+    });
+
+    function validateForm() {
+        const fileInput = document.getElementById("file");
+        return fileInput.files.length !== 0;
+    }
+</script>
+</body>
+</html>
